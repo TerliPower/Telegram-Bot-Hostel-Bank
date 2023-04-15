@@ -1,0 +1,4 @@
+#import a
+from a import *
+
+print( 6 + a )
