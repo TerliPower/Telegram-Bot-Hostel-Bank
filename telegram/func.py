@@ -13,7 +13,7 @@ def TransmitMoney0(message):
     return 1
 
 def TransmitMoney(message, curr):
-    user = SqlCommit('''SELECT * FROM users WHERE name = ?;''', (message.text,))
+    user = SqlCommit('SELECT * FROM users WHERE name = ?;', (message.text,))
     if len(user) != 0:
         MenuConstructor(message.from_user.id, [message.text, curr], TransmitMoney1, 'Введите сумму')
         print('bot.py: TransmitMoney')
@@ -537,8 +537,12 @@ def EmisCurr(message, account, curr):
 def GetTop(curr):
     top = [0,0,0,0,0,0]
     topn = ['','','','','','']
-    accs = SqlCommit(f'SELECT name,{curr} FROM users WHERE {curr} != "None AND emitent != {curr}"')
+    accs = SqlCommit('SELECT name, Хостел_Коины, emitent FROM users WHERE Хостел_Коины != "None"')
+    accos = []
     for acc in accs:
+        if acc[2] != 'Хостел_Коины':
+            accos.append(acc)
+    for acc in accos:
         if acc[1] > top[5]:
             top[5] = acc[1]
 
@@ -591,7 +595,7 @@ def GetTop(curr):
             else:
                 text += '🎉' + topn[i] + ':   ' + str(top[i]) + '📃\n'
     text = text[:-1]
-    print('bot.py: GetTop')
+    logging.debug('func.py: GetTop')
     return text
 
 def GetAllForbCurr():
@@ -830,7 +834,7 @@ def GetCurrDescription(curr):
         des1 = 'По облигации обьявлен дефолт! Она больше не выплачивается!'
     else: des1 = ''
     print(data)
-    data = des1 + '\nНазвание облигации: ' + data[2] + '\n' + 'Описание: ' + des + 'Эмитент: ' + data[3] + '\nДаты выплаты купона: ' + data[8] + '\nОбщее количество: ' + str(data[7])
+    data = des1 + '\nНазвание облигации: ' + data[2] + '\n' + 'Описание: ' + des + 'Эмитент: ' + data[3] + '\nКупон: ' + data[4] + ' ' + data[5] + '\nДаты выплаты купона: ' + data[8] + '\nОбщее количество: ' + str(data[7])
     print('bot.py: GetCurrDescription')
     return data
 
@@ -915,3 +919,24 @@ def IsCurrUserHas(name, qcurr):
         if curr == qcurr:
             return True
     return False
+
+class my_answer:
+    #global from_received
+    def proper_message(message, cmd):
+        if message.text == cmd and message.chat.type == 'private':
+            #global msg_type
+            msg_type = 'private'
+            from_received = message.from_user.id
+            return True
+        elif message.text == cmd + botname and message.chat.type == 'group':
+            #global msg_type
+            msg_type = 'group'
+            from_received = message.chat.id
+            return True
+        else:
+            return False
+    def buttons(*args):
+        if msg_type == 'group':
+            return None
+        #elif msg_type == 'private':
+            #return *args

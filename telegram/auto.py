@@ -5,7 +5,8 @@ from header import *
 
 def mainl():
     try:
-        print(GetSecondsToHour(18))
+        logging.debug(f'{GetSecondsToHour(18)}' + 'ii guys')
+        logging.debug('bye guys')
         time.sleep(GetSecondsToHour(18))
         while True:
             EachSixPm()

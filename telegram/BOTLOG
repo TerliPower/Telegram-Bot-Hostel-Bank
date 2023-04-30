@@ -1,0 +1,5 @@
+DEBUG:urllib3.connectionpool:Starting new HTTPS connection (1): rivalregions.com:443
+DEBUG:urllib3.connectionpool:https://rivalregions.com:443 "POST /rival/pass HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:https://rivalregions.com:443 "GET /?viewer_id=246989401&id=246989401&gl_number=&gl_photo=&gl_photo_medium=&gl_photo_big=&tmz_sent=3&wdt_sent=1008&access_token=d42f21717dbdbd9a0b1a5a2d49890602&hash=47ad43fae955cea971368d8bbc86c966 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:https://rivalregions.com:443 "GET /log/index/money?c=dc9a69c7c8e40ae747e189e1c646d3f3 HTTP/1.1" 200 None
+DEBUG:urllib3.connectionpool:https://rivalregions.com:443 "GET /log/index/money?c=dc9a69c7c8e40ae747e189e1c646d3f3 HTTP/1.1" 200 None

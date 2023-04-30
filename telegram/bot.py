@@ -1,11 +1,12 @@
 from header import *
 from func import *
+from pars import *
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    PATH_TO_ACCOUNT = f'users/{message.from_user.username}'
-    if message.text == 'Мой аккаунт':
-        user = SqlCommit('''SELECT * FROM users WHERE name = ?;''', (message.from_user.username,))
+    if (message.text == 'Мой аккаунт' and message.chat.type == 'private') or (message.text == f'Мой аккаунт{botname}' and message.chat.type == 'group'):
+    #if my_answer.proper_message('Мой аккаунт')
+        user = SqlCommit('SELECT * FROM users WHERE name = ?;', (message.from_user.username,))
         if len(user) == 0:
             with open('announce', "r") as f:
                 announce = f.read()
@@ -28,7 +29,7 @@ def get_text_messages(message):
                 accounts.append(curr + ': ' + number)
             accounts = '\n'.join(accounts)
 
-            MiniConstructor(message.from_user.id, announce + '🤵' + info + '\n' +  accounts, 'Перевести', 'Внести Ривалы', 'Вывести Ривалы', 'Главное меню')
+            #MiniConstructor(my_answer.from_received, announce + '🤵' + info + '\n' +  accounts, *my_answer.buttons 'Перевести', 'Внести Ривалы', 'Вывести Ривалы', 'Главное меню')
         else:
             with open('announce', "r") as f:
                 announce = f.read()
@@ -59,10 +60,12 @@ def get_text_messages(message):
     elif message.text == '/start':
         MiniConstructor(message.from_user.id, 'Привет, что вы хотите проверить?', 'Мой аккаунт', 'Биржа', 'Топ', 'Настройки')
 
-    elif message.text == 'Перевести' and len(SqlCommit('SELECT * FROM users WHERE name = ?', (message.from_user.username,))) != 0:
+    elif message.text == '@hbank Перевести' and len(SqlCommit('SELECT * FROM users WHERE name = ?', (message.from_user.username,))) != 0:
+        if message.chat.type == "group":
+            MiniConstructor(message.chat.id, f'{message.from_user.username}, пожалуйста, перейдите в личную переписку с ботом, чтобы составить анкету для перевода') 
         MenuConstructor(message.from_user.id, [0], TransmitMoney0, 'Выберите ценную бумагу', *tuple(GetAllCurrencies()), 'Главное меню')
 
-    elif message.text == 'Главное меню':
+    elif message.text == 'Главное меню' and message.chat.type != "group":
         if len(SqlCommit('SELECT * FROM users WHERE name = ?', (message.from_user.username,))) != 0:
             MiniConstructor(message.from_user.id, 'Вы в главном меню, ня', 'Мой аккаунт', 'Биржа', 'Банк', 'Топ', 'Настройки')
         else:
@@ -175,9 +178,9 @@ def get_text_messages(message):
     elif message.text == 'Анонс' and message.from_user.username == 'TerliPower':
         MenuConstructor(message.from_user.id, [0], SetAnnounce, 'Напишите анонс', 'Удалить', 'Главное меню')
 
-    #elif message.text == 'd':
-    #    MiniConstructor(message.from_user.id, 'hehe', *tuple(GetDatesMonth()))
-    #    return 1
+    elif message.text == 'd':
+        MenuConstructor(message.chat.id, [0], coolfunc, 'мда')
+        return 1
 
     elif len(SqlCommit('SELECT * FROM users WHERE name = ?', (message.from_user.username,))) != 0:
         if IsCurrExists(0, message.text) and message.text[0] == '📃':
@@ -188,5 +191,15 @@ def get_text_messages(message):
                 MiniConstructor(message.from_user.id, GetCurrDescription(message.text), 'Мой аккаунт', 'Биржа', 'Банк', 'Топ', 'Настройки')
             return 1
         MiniConstructor(message.from_user.id, 'Такой валюты нет! Кусь!', 'Перевести', 'Внести Ривалы', 'Вывести Ривалы', 'Главное меню')
+
+@bot.inline_handler(lambda query: True)
+def query_text(inline_query):
+    try:
+        r = types.InlineQueryResultArticle('1', 'Мой аккаунт', types.InputTextMessageContent(f'Мой аккаунт{botname}'))
+        r2  = types.InlineQueryResultArticle('2', 'Банк', types.InputTextMessageContent('Банк'))
+        r3 = types.InlineQueryResultArticle('3', 'Топ', types.InputTextMessageContent('Топ'))
+        bot.answer_inline_query(inline_query.id, results = [r, r2, r3])
+    except Exception as e:
+        print(e)
 
 bot.polling(none_stop=True, interval=0) #обязательная для работы бота часть
