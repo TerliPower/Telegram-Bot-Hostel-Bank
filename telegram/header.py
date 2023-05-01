@@ -18,8 +18,7 @@ import telebot
 import emoji
 import logging
 
-#bot = telebot.TeleBot('5898826480:AAE_HCmCajhiVtdB1Q-Kxu-gRpaEm0qhOOY')
-bot = telebot.TeleBot('1877401711:AAF8qEYooYn-gzuYxktLiRQkMQ8jnqoWCCQ')
+
 botname = '@simpleroll_bot'
 
 sqlite_connection = sqlite3.connect('bot.db', check_same_thread = False)
